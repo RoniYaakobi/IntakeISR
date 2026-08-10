@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.intakeISR.IntakeISR;
 
+
 public class RobotContainer {
 
   private final IntakeISR intake;
@@ -24,8 +25,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    controller.a().onTrue(Commands.runOnce(superStructure::startIntake));
-    controller.b().onTrue(Commands.runOnce(superStructure::stopIntake));
+
   }
 
   public IntakeISR getIntake(){
