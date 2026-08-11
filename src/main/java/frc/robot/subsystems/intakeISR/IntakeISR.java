@@ -6,75 +6,47 @@ package frc.robot.subsystems.intakeISR;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeISR extends SubsystemBase {
 
-  // The state I want to hold
-  public enum DesiredState{
-    ACTIVE, // intake deployed and roller on
-    CLOSED // intake closed and roller off
-  }
-
-  // The state I currently am in
-  public enum CurrentState {
-    ACTIVATING, // deploy intake and turn on roller
-    CLOSING // close intake and turn off roller
-  }
-
   public final IntakeISRIO io;
   public final IntakeISRInputsAutoLogged inputs;
-  public DesiredState desiredState;
-  public CurrentState currentState;
 
 
   /** Creates a new IntakeISR. */
   public IntakeISR() {
-    desiredState = DesiredState.CLOSED;
-    currentState = CurrentState.CLOSING;
-
     io = new IntakeISRIORev();
     inputs = new IntakeISRInputsAutoLogged();
   }
 
-  // Transition based on the desired state to the current state. Enforce rules here
-  private CurrentState handleStateTransition(){
-    return switch (desiredState){
-      case ACTIVE -> CurrentState.ACTIVATING;
-      case CLOSED -> CurrentState.CLOSING;
-    };
+  public Command activate(){
+    return new FunctionalCommand(
+      () -> io.goToRotation(IntakeISRConstants.OPEN_ROTATION), () -> {},
+      (interrupted) -> io.setRollerSpeed(0),
+      this::isPivotAtGoal , this);
   }
 
-  // Run the current state
-  private void applyState(){
-    switch (currentState){
-      case ACTIVATING -> {
-        io.goToRotation(IntakeISRConstants.OPEN_ROTATION);
-        if (inputs.positionRotation.minus(IntakeISRConstants.OPEN_ROTATION).getDegrees() 
-            <= IntakeISRConstants.OPEN_TOLERANCE.getDegrees()){
-          io.setRollerSpeed(IntakeISRConstants.ROLLER_SPEED_RPS);
-        }
-      }
-      case CLOSING -> {
-        io.stopRoller();
-        io.goToRotation(IntakeISRConstants.CLOSED_ROTATION);
-      }
-    };
+  public Command close(){
+    return Commands.runOnce(
+    () -> {
+      io.stopRoller();
+      io.goToRotation(IntakeISRConstants.CLOSED_ROTATION);
+    } ,this);
   }
 
-  // Attempt to trigger a state 
-  public void setDesiredState(DesiredState desiredState){
-    this.desiredState = desiredState;
+  private boolean isPivotAtGoal(){
+    return inputs.positionRotation.minus(IntakeISRConstants.OPEN_ROTATION).getDegrees() 
+            <= IntakeISRConstants.OPEN_TOLERANCE.getDegrees();
   }
+
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(getName(), inputs);
-
-    currentState = handleStateTransition();
-    Logger.recordOutput(getName() + "/Desired State", desiredState);
-    Logger.recordOutput(getName() + "/Current State", currentState);
-    applyState();
   }
 }

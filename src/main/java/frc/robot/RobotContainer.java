@@ -5,34 +5,62 @@
 package frc.robot;
 
 
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.SuperStructure;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.statemachine.StateMachine;
 import frc.robot.subsystems.intakeISR.IntakeISR;
 
 
 public class RobotContainer {
 
+  private static RobotContainer instance = null;
+  private final StateMachine superStructure;
+
+  public static RobotContainer getInstance(){
+    if (instance == null){
+      instance = new RobotContainer();
+    }
+    
+    return instance;
+  }
+
   private final IntakeISR intake;
-  private final SuperStructure superStructure;
   private final CommandXboxController controller;
-  public RobotContainer() {
+
+  private RobotContainer() {
     intake = new IntakeISR();
-    superStructure = new SuperStructure(this);
     controller = new CommandXboxController(0);
-    configureBindings();
+    superStructure = new StateMachine("SuperStrucure");
+    configureSuperStructure();
   }
 
-  private void configureBindings() {
+  private void configureSuperStructure(){
+    var activateIntake = superStructure.addState(intake.activate());
+    var closeIntake = superStructure.addState(intake.close());
+    var autonomous = superStructure.addState(getAutonomousCommand());
 
+    
+    superStructure.setInitialState(autonomous);
+    
+    autonomous.switchTo(closeIntake).when(() -> Robot.RobotState.getState() == Robot.RobotState.TELEOP);
+
+    
+    superStructure.switchFromAny().to(closeIntake).when(controller.a().and(() -> RobotState.isTeleop()));
+    superStructure.switchFromAny().to(activateIntake).when(controller.b().and(() -> RobotState.isTeleop()));
+
+    
   }
 
-  public IntakeISR getIntake(){
-    return intake;
+  public Command getSuperStructure(){
+    return superStructure;
   }
 
-  public Command getAutonomousCommand() {
+  private Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
   }
 }

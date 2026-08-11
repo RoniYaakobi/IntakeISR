@@ -153,7 +153,7 @@ public final class StateMachine extends Command {
                 getName() + " does not have an initial state😱😱😱. Use .setInitialState() to provide one.");
             }
 
-            setCurrentState(initialState);
+        setCurrentState(initialState);
     }
 
     @Override
@@ -166,7 +166,8 @@ public final class StateMachine extends Command {
         var currentCommand = currentState.command();
 
         if (queuedTransition){
-            CommandScheduler.getInstance().schedule((currentCommand.asProxy()));
+            CommandScheduler.getInstance().schedule(currentCommand.asProxy());
+
             currentState.runEnterCallbacks();
             queuedTransition = false;
         }
@@ -189,11 +190,11 @@ public final class StateMachine extends Command {
                     return;
                 }
             }
+            return;
         }
 
         currentState.runExitCallbacks();
         currentState = verifyState(currentState.nextState());
-        return;
     }
 
     private void setCurrentState(State state){
