@@ -5,8 +5,6 @@
 package frc.robot;
 
 
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -47,13 +45,12 @@ public class RobotContainer {
     
     superStructure.setInitialState(autonomous);
     
-    autonomous.switchTo(closeIntake).when(() -> Robot.RobotState.getState() == Robot.RobotState.TELEOP);
+    var isTeleop = new Trigger(() -> Robot.RobotState.getState() == Robot.RobotState.TELEOP);
 
-    
-    superStructure.switchFromAny().to(closeIntake).when(controller.a().and(() -> RobotState.isTeleop()));
-    superStructure.switchFromAny().to(activateIntake).when(controller.b().and(() -> RobotState.isTeleop()));
+    autonomous.switchTo(closeIntake).when(isTeleop);
 
-    
+    superStructure.switchFromAny().to(closeIntake).when(controller.a().and(isTeleop));
+    superStructure.switchFromAny().to(activateIntake).when(controller.b().and(isTeleop));    
   }
 
   public Command getSuperStructure(){

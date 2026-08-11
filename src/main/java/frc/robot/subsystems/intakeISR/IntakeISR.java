@@ -35,7 +35,7 @@ public class IntakeISR extends SubsystemBase {
     () -> {
       io.stopRoller();
       io.goToRotation(IntakeISRConstants.CLOSED_ROTATION);
-    } ,this);
+    } , this);
   }
 
   private boolean isPivotAtGoal(){
