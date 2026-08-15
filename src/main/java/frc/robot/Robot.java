@@ -14,7 +14,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends LoggedRobot {
-  private Command m_autonomousCommand;
+  public enum RobotState {
+    DISABLED,
+    AUTONOMOUS,
+    TELEOP,
+    TEST;
+
+    private static RobotState state;
+
+    public static RobotState getState(){
+      return state;
+    }
+
+    public static void setState(RobotState state){
+      RobotState.state = state;
+    }
+  }
 
   private final RobotContainer m_robotContainer;
 
@@ -31,7 +46,7 @@ public class Robot extends LoggedRobot {
 
     Logger.start();
     
-    m_robotContainer = new RobotContainer();
+    m_robotContainer = RobotContainer.getInstance();
 
   }
 
@@ -41,7 +56,9 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    RobotState.setState(RobotState.DISABLED);
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -51,10 +68,11 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    RobotState.setState(RobotState.AUTONOMOUS);
+    var superstructure = m_robotContainer.getSuperStructure();
 
-    if (m_autonomousCommand != null) {
-      CommandScheduler.getInstance().schedule(m_autonomousCommand);
+    if (superstructure != null) {
+      CommandScheduler.getInstance().schedule(superstructure);
     }
   }
 
@@ -66,9 +84,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
+    RobotState.setState(RobotState.TELEOP);
   }
 
   @Override
@@ -79,6 +95,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void testInit() {
+    RobotState.setState(RobotState.TEST);
     CommandScheduler.getInstance().cancelAll();
   }
 
