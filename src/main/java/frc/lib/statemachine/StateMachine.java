@@ -5,11 +5,12 @@
 package frc.lib.statemachine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -56,7 +57,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public final class StateMachine extends Command {
     private State initialState = null;
-    private final List<State> states = new ArrayList<>();
+    private final Map<StateName,State> states = new HashMap<>();
+
 
     private State currentState = null;
     private boolean queuedTransition = false;
@@ -76,19 +78,28 @@ public final class StateMachine extends Command {
         setName(name);
     }
 
+    public State getState(StateName statename){
+        return states.get(statename);
+    }
+
     /**
     * Adds a new state to the state machine. State transitions can be specified on the new state
     * using {@link State#switchTo(State)}.
     *
     * @param command The command for the state to execute. Cannot be null.
+    * @param stateName The name of the state.
     * @return The newly created state.
     */
-    public State addState(Command command){
+    public State addState(Command command, StateName stateName){
         if (command == null){
             throw new IllegalArgumentException("Command in state cannot be null🔥🔥🔥!");
         }
+        if (stateName == null){
+            throw new IllegalArgumentException("State must have name.");
+        }
+
         var state = new State(this, command);
-        states.add(state);
+        states.put(stateName, state);
         return state;
     }
 
@@ -120,7 +131,7 @@ public final class StateMachine extends Command {
      */
     public TransitionNeedsTargetStage switchFromAny(State... states) {
         if (states.length == 0) {
-        return new TransitionNeedsTargetStage(List.copyOf(this.states));
+        return new TransitionNeedsTargetStage(List.copyOf(this.states.values()));
         } else {
         return new TransitionNeedsTargetStage(List.of(states));
         }
@@ -166,7 +177,7 @@ public final class StateMachine extends Command {
         var currentCommand = currentState.command();
 
         if (queuedTransition){
-            CommandScheduler.getInstance().schedule(currentCommand.asProxy());
+            CommandScheduler.getInstance().schedule(currentCommand);
 
             currentState.runEnterCallbacks();
             queuedTransition = false;
@@ -247,7 +258,7 @@ public final class StateMachine extends Command {
         private final List<Runnable> enterCallbacks = new ArrayList<>();
         private final List<Runnable> exitCallbacks = new ArrayList<>();
 
-        private State(StateMachine stateMachine, Command command){
+        private State(StateMachine stateMachine, Command command ){
             this.stateMachine = stateMachine;
             this.command = command;
         }
@@ -586,6 +597,18 @@ public final class StateMachine extends Command {
 
         public BooleanSupplier getCondition() {
             return condition;
+        }
+    }
+
+    public static class StateName{
+        private String name;
+        
+        public StateName(String name){
+            this.name = name;
+        }
+
+        public boolean equals(StateName other) {
+            return name.equals(other.name);
         }
     }
 }

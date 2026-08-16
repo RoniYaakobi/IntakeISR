@@ -7,7 +7,7 @@ public interface FlywheelIO {
 
     @AutoLog
     public static class FlyWheelInputs{
-
+        double speedMPS;
     }
 
 

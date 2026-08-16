@@ -10,8 +10,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.lib.math.IsNear;
+import frc.lib.statemachine.StateMachine;
 import frc.robot.subsystems.shooter.ShooterConstants;
 
 public class HoodSubsystem extends SubsystemBase {
@@ -45,10 +45,22 @@ public class HoodSubsystem extends SubsystemBase {
     return Commands.run(this::stop, this);
   }
 
-  public Command waitUntilClose(Rotation2d goal){
-    return new WaitUntilCommand(
-      () -> IsNear.isNear(inputs.angle, goal, ShooterConstants.HOOD_TOLERANCE)
-    );
+  public boolean waitUntilClose(Rotation2d goal){
+    return IsNear.isNear(inputs.angle, goal, ShooterConstants.HOOD_TOLERANCE);
+  }
+
+  public Command closeHoodCommand(){
+    var closeHood = new StateMachine("close hood");
+
+    var zeroHood = closeHood.addState(setAngleCommand(Rotation2d.kZero), ShooterConstants.ZERO_HOOD);
+
+    var turnOffHood = closeHood.addState(closeHoodCommand(), ShooterConstants.CLOSE_HOOD);
+
+    closeHood.setInitialState(zeroHood);
+    zeroHood.switchTo(turnOffHood).when(() -> waitUntilClose(Rotation2d.kZero));
+
+    return closeHood;
+
   }
 
   @Override

@@ -4,19 +4,24 @@
 
 package frc.robot;
 
-
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.lib.statemachine.StateMachine;
+import frc.robot.subsystems.indexer.TwindexerSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 
 public class RobotContainer {
 
   private static RobotContainer instance = null;
-  private final StateMachine superStructure;
+  private final CommandXboxController driverController;
+  private final CommandXboxController operatorController;
+
+  private final ShooterSubsystem shooter;
+  private final IntakeSubsystem intake;
+  private final TwindexerSubsystem twindexer;
+
 
   public static RobotContainer getInstance(){
     if (instance == null){
@@ -26,30 +31,41 @@ public class RobotContainer {
     return instance;
   }
 
-  private final CommandXboxController controller;
-
   private RobotContainer() {
-    controller = new CommandXboxController(0);
-    superStructure = new StateMachine("SuperStrucure");
+    driverController = new CommandXboxController(0);
+    operatorController = new CommandXboxController(1);
+
+    shooter = new ShooterSubsystem();
+    intake = new IntakeSubsystem();
+    twindexer = new TwindexerSubsystem();
+
     configureSuperStructure();
   }
 
   private void configureSuperStructure(){
-
-    var autonomous = superStructure.addState(getAutonomousCommand());
-
-    
-    superStructure.setInitialState(autonomous);
-    
-    var isTeleop = new Trigger(() -> Robot.RobotState.getState() == Robot.RobotState.TELEOP);
-    
   }
 
-  public Command getSuperStructure(){
-    return superStructure;
+  public CommandXboxController getDriverController(){
+    return driverController;
   }
 
-  private Command getAutonomousCommand() {
+  public CommandXboxController getOperatorController(){
+    return operatorController;
+  }
+
+  public ShooterSubsystem getShooter(){
+    return shooter;
+  }
+
+  public IntakeSubsystem getIntake(){
+    return intake;
+  }
+
+  public TwindexerSubsystem getTwindexer(){
+    return twindexer;
+  }
+
+  public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
   }
 }

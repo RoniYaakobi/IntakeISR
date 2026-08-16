@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.lib.math.IsNear;
 
 public class PivotSubsystem extends SubsystemBase {
@@ -43,16 +42,12 @@ public class PivotSubsystem extends SubsystemBase {
     return Commands.run(this::stop, this);
   }
 
-  public Command waitUntilOpen(){
-    return new WaitUntilCommand(
-      () -> IsNear.isNear(inputs.position, PivotConstants.OPEN_PIVOT_POSITION, PivotConstants.POSITION_TOLERANCE)
-    );
+  public boolean isOpen(){
+    return IsNear.isNear(inputs.position, PivotConstants.OPEN_PIVOT_POSITION, PivotConstants.POSITION_TOLERANCE);
   }
 
-  public Command waitUntilClose(){
-    return new WaitUntilCommand(
-      () -> IsNear.isNear(inputs.position, PivotConstants.CLOSE_PIVOT_POSITION, PivotConstants.POSITION_TOLERANCE)
-    );
+  public boolean isClosed(){
+    return IsNear.isNear(inputs.position, PivotConstants.CLOSE_PIVOT_POSITION, PivotConstants.POSITION_TOLERANCE);
   }
 
   @Override

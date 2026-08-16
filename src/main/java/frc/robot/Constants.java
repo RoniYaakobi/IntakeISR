@@ -11,10 +11,13 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.lib.statemachine.StateMachine.StateName;
 
 public class Constants {
 
     public static final boolean USE_OBJECT_DETECTION = true;
+
+    public static final StateName AUTONOMOUS_STATE_NAME = new StateName("autonomous");
 
     public static final Mode simMode = Mode.REAL;
     public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;

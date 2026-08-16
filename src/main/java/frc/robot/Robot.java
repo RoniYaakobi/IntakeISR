@@ -10,28 +10,9 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends LoggedRobot {
-  public enum RobotState {
-    DISABLED,
-    AUTONOMOUS,
-    TELEOP,
-    TEST;
-
-    private static RobotState state;
-
-    public static RobotState getState(){
-      return state;
-    }
-
-    public static void setState(RobotState state){
-      RobotState.state = state;
-    }
-  }
-
-  private final RobotContainer m_robotContainer;
 
   public Robot() {
     
@@ -45,9 +26,6 @@ public class Robot extends LoggedRobot {
     }
 
     Logger.start();
-    
-    m_robotContainer = RobotContainer.getInstance();
-
   }
 
   @Override
@@ -57,7 +35,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledInit() {
-    RobotState.setState(RobotState.DISABLED);
   }
 
   @Override
@@ -67,9 +44,8 @@ public class Robot extends LoggedRobot {
   public void disabledExit() {}
 
   @Override
-  public void autonomousInit() {
-    RobotState.setState(RobotState.AUTONOMOUS);
-    var superstructure = m_robotContainer.getSuperStructure();
+  public void autonomousInit() {    
+    var superstructure = SuperStructure.getInstance().getCommand();
 
     if (superstructure != null) {
       CommandScheduler.getInstance().schedule(superstructure);
@@ -84,7 +60,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    RobotState.setState(RobotState.TELEOP);
   }
 
   @Override
@@ -95,7 +70,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void testInit() {
-    RobotState.setState(RobotState.TEST);
     CommandScheduler.getInstance().cancelAll();
   }
 

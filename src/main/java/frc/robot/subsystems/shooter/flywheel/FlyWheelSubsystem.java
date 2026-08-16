@@ -4,11 +4,14 @@
 
 package frc.robot.subsystems.shooter.flywheel;
 
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.math.IsNear;
+import frc.robot.subsystems.shooter.ShooterConstants;
 
 public class FlyWheelSubsystem extends SubsystemBase {
   /** Creates a new FlyWheelSubsystem. */
@@ -34,6 +37,10 @@ public class FlyWheelSubsystem extends SubsystemBase {
     io.stop();
     Logger.recordOutput("FlywheelSubsystem/FlywheelSetpointMPS", 0);
     Logger.recordOutput("FlywheelSubsystem/Stopped", true);
+  }
+
+  public boolean isSpunUp(double speedMPS){
+    return IsNear.isNear(speedMPS, inputs.speedMPS, ShooterConstants.FLYWHEEL_MPS_TOLERANCE);
   }
 
   public Command stopCommand(){

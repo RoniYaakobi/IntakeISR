@@ -4,10 +4,10 @@
 
 package frc.robot.subsystems.shooter;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.statemachine.StateMachine;
 import frc.robot.subsystems.shooter.ShooterConstants.ShootParams;
 import frc.robot.subsystems.shooter.flywheel.FlyWheelSubsystem;
 import frc.robot.subsystems.shooter.hood.HoodSubsystem;
@@ -33,10 +33,29 @@ public class ShooterSubsystem extends SubsystemBase {
     );
   }
 
+  public Command spinUpCommand(ShootParams params){
+    return Commands.parallel(
+      flywheel.setSpeedMPSCommand(params.flywheelspeedMPS()),
+      hood.setAngleCommand(params.hoodAngle()));
+  }
+
+  public Command spinUpAndShootCommand(ShootParams spinUpParams, ShootParams shootParams){
+    var spinUpAndShoot = new StateMachine("SpinUpAndShoot");
+    
+    var spinUp = spinUpAndShoot.addState(spinUpCommand(spinUpParams), ShooterConstants.SPIN_UP);
+
+    var shoot = spinUpAndShoot.addState(shootCommand(shootParams), ShooterConstants.SHOOT);
+    
+    spinUpAndShoot.setInitialState(spinUp);
+    spinUp.switchTo(shoot).when(() -> flywheel.isSpunUp(0));
+    
+    return spinUpAndShoot;
+  }
+
   public Command stopCommand(){
     return Commands.parallel(
       flywheel.stopCommand(),
-      hood.setAngleCommand(Rotation2d.kZero).andThen(hood.setAngleCommand(Rotation2d.kZero), hood.stopCommand()),
+      hood.closeHoodCommand(),
       kicker.stopCommand()
     );
   }
