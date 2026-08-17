@@ -20,11 +20,12 @@ public class ShooterConstants {
 
     public static final StateName SPIN_UP_AND_SHOOT_STATE_NAME = new StateName("SPIN_UP_AND_SHOOT");
     public static final StateName STOP_SHOOTING_STATE_NAME = new StateName("STOP_SHOOTING");
+
     public static final StateName SPIN_UP = new StateName("SPIN_UP");
     public static final StateName SHOOT = new StateName("SHOOT");
 
     public static final StateName ZERO_HOOD = new StateName("ZERO_HOOD");
     public static final StateName CLOSE_HOOD = new StateName("CLOSE_HOOD");
 
-
+    
 }

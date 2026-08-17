@@ -1,0 +1,68 @@
+package frc.robot.subsystems.shooter.kicker;
+
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
+
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.VoltageUnit;
+import edu.wpi.first.units.measure.Per;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+
+public class KickerConstants {
+    public static final double GEAR_RATIO = 3;
+    public static final double UNIT_CONVERSION = 0.67 * Math.PI;
+    public static final int CAN_ID = 67;
+
+    public static final double kV = 0.31938;
+    public static final double kA = 0.023275;
+
+    public static final DCMotor MOTOR = DCMotor.getNeoVortex(1);
+
+    public static final double TOLERANCE_METERS = 0.5;
+
+    public static SparkBaseConfig getKickerConfig(){
+        var sparky = new SparkFlexConfig();
+
+        sparky.smartCurrentLimit(80, 40);
+
+        sparky.encoder.positionConversionFactor(UNIT_CONVERSION);
+
+        sparky.closedLoop.pid(0.1, 0.05, 0);
+        sparky.closedLoop.iZone(2);
+        sparky.closedLoop.iMaxAccum(3);
+
+        sparky.closedLoop.feedForward.kV(0.382 / UNIT_CONVERSION);
+
+        return sparky;
+    }
+
+    private static LinearSystem<N1, N1, N1> getPlant(){
+        double unitConversion = KickerConstants.UNIT_CONVERSION;
+
+        Per<VoltageUnit, AngularVelocityUnit> kV = 
+            Units.Volts.per(Units.RotationsPerSecond)
+                .ofNative(KickerConstants.kV * unitConversion);
+
+        Per<VoltageUnit, AngularAccelerationUnit> kA = 
+            Units.Volts.per(Units.RotationsPerSecondPerSecond)
+                .ofNative(KickerConstants.kA * unitConversion);
+        
+        LinearSystem<N1, N1, N1> plant = 
+            LinearSystemId.identifyVelocitySystem(
+                kV.in(Units.VoltsPerRadianPerSecond),
+                kA.in(Units.VoltsPerRadianPerSecondSquared)
+        );
+
+        return plant;
+    }
+
+    public static FlywheelSim getKickerSim(){
+        return new FlywheelSim(KickerConstants.getPlant(), KickerConstants.MOTOR);
+    }
+}

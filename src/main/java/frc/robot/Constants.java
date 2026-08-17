@@ -17,6 +17,8 @@ public class Constants {
 
     public static final boolean USE_OBJECT_DETECTION = true;
 
+    public static final double MOTOR_IDEAL_VOLTAGE = 13;
+
     public static final StateName AUTONOMOUS_STATE_NAME = new StateName("autonomous");
 
     public static final Mode simMode = Mode.REAL;

@@ -6,7 +6,7 @@ public interface KickerIO {
 
     @AutoLog
     public static class KickerInputs {
-
+        double kickerSpeedMPS;
     }
 
     void setDutyCycle(double dutycycle);
