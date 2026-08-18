@@ -75,9 +75,9 @@ public class HoodConstants {
                 ATTRIBUTES.MOTOR(), 
                 ATTRIBUTES.GEAR_RATIO(), 
                 ARM_LENGTH_METERS,
-                MIN_ANGLE,
-                MAX_ANGLE,
+                UnitConversions.rotationsToRadians(MIN_ANGLE),
+                UnitConversions.rotationsToRadians(MAX_ANGLE),
                 HOOD_SIMULATE_GRAVITY,
-                STARTING_ANGLE);
+                UnitConversions.rotationsToRadians(STARTING_ANGLE));
     }
 }

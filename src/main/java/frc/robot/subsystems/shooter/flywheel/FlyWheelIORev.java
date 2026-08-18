@@ -19,6 +19,7 @@ public class FlyWheelIORev implements FlywheelIO {
             ResetMode.kResetSafeParameters, 
             PersistMode.kPersistParameters);
 
+
         followMotor = new SparkFlex(FlyWheelConstants.FOLLOWER_CAN_ID, MotorType.kBrushless);
 
         followMotor.configure(

@@ -6,7 +6,7 @@ public interface TwindexerIO {
 
     @AutoLog
     public static class TwindexerInputs{
-        
+        double[] speedsRPS;
     }
 
     void setDutyCycle(double dutyCycle);

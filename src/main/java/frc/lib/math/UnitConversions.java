@@ -198,4 +198,15 @@ public final class UnitConversions {
   public static double lbsToKilograms(double lbs) {
     return lbs * kKilogramsPerLb;
   }
+
+  /**
+   * Converts RPM into rotations per cycle.
+   * 
+   * @param RPM The RPM to convert into rotations per cycle.
+   * @param cycleTime The amount of time in a cycle.
+   * @return Rotations per cycle converted from RPM. 
+   */
+  public static double RPMtoRotationsPerCycle(double RPM, double cycleTime){
+    return (RPM / kSecondsPerMinute) * cycleTime;
+  }
 }

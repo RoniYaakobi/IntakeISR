@@ -30,6 +30,8 @@ public class FlyWheelConstants {
     public static SparkFlexConfig getLeadFlyWheelConfig(){
         var sparky = new SparkFlexConfig();
 
+        sparky.inverted(LEAD_ATTRIBUTES.IS_INVERTED());
+
         sparky.encoder.positionConversionFactor(LEAD_ATTRIBUTES.UNIT_CONVERSION());
         sparky.smartCurrentLimit(80, 50, 4000);
 

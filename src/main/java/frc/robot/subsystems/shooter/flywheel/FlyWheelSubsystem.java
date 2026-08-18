@@ -7,6 +7,7 @@ package frc.robot.subsystems.shooter.flywheel;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,7 +20,7 @@ public class FlyWheelSubsystem extends SubsystemBase {
   private final FlyWheelInputsAutoLogged inputs;
   
   public FlyWheelSubsystem() {
-    io = null;
+    io = RobotBase.isReal() ? new FlyWheelIORev() : new FlyWheelIOSim();
     inputs = new FlyWheelInputsAutoLogged();
   }
 

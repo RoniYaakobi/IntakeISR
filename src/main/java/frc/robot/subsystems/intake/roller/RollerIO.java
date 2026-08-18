@@ -7,7 +7,7 @@ public interface RollerIO {
     
     @AutoLog
     public static class RollerInputs{
-
+        double speedMPS;
     }
 
     void updateInputs(RollerInputs inputs);
