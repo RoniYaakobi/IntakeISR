@@ -6,20 +6,19 @@ package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.statemachine.StateMachine;
 import frc.robot.subsystems.shooter.ShooterConstants.ShootParams;
 import frc.robot.subsystems.shooter.flywheel.FlyWheelSubsystem;
 import frc.robot.subsystems.shooter.hood.HoodSubsystem;
 import frc.robot.subsystems.shooter.kicker.KickerSubsystem;
 
-public class ShooterSubsystem extends SubsystemBase {
+public class ShooterCoordinator {
   /** Creates a new ShooterSubsystem. */
   private final FlyWheelSubsystem flywheel;
   private final HoodSubsystem hood;
   private final KickerSubsystem kicker;
 
-  public ShooterSubsystem() {
+  public ShooterCoordinator() {
     flywheel = new FlyWheelSubsystem();
     hood = new HoodSubsystem();
     kicker = new KickerSubsystem();
@@ -58,10 +57,5 @@ public class ShooterSubsystem extends SubsystemBase {
       hood.closeHoodCommand(),
       kicker.stopCommand()
     );
-  }
-  
-  @Override
-  public void periodic() {
-
   }
 }

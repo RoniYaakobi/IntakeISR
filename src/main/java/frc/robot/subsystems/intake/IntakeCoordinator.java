@@ -6,19 +6,18 @@ package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.statemachine.StateMachine;
 import frc.robot.subsystems.intake.pivot.PivotConstants;
 import frc.robot.subsystems.intake.pivot.PivotSubsystem;
 import frc.robot.subsystems.intake.roller.RollerConstants;
 import frc.robot.subsystems.intake.roller.RollerSubsystem;
 
-public class IntakeSubsystem extends SubsystemBase {
+public class IntakeCoordinator {
   /** Creates a new IntakeSubsystem. */
   private final PivotSubsystem pivot;
   private final RollerSubsystem roller;
 
-  public IntakeSubsystem() {
+  public IntakeCoordinator() {
     pivot = new PivotSubsystem();
     roller = new RollerSubsystem();
   }
@@ -54,10 +53,5 @@ public class IntakeSubsystem extends SubsystemBase {
     closeIntake.switchTo(haltPivot).when(pivot::isClosed);
 
     return disableIntake;
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
   }
 }

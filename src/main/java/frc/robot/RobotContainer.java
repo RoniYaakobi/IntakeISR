@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.indexer.TwindexerSubsystem;
-import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.intake.IntakeCoordinator;
+import frc.robot.subsystems.shooter.ShooterCoordinator;
 
 
 public class RobotContainer {
@@ -18,8 +18,8 @@ public class RobotContainer {
   private final CommandXboxController driverController;
   private final CommandXboxController operatorController;
 
-  private final ShooterSubsystem shooter;
-  private final IntakeSubsystem intake;
+  private final ShooterCoordinator shooter;
+  private final IntakeCoordinator intake;
   private final TwindexerSubsystem twindexer;
 
 
@@ -35,8 +35,8 @@ public class RobotContainer {
     driverController = new CommandXboxController(0);
     operatorController = new CommandXboxController(1);
 
-    shooter = new ShooterSubsystem();
-    intake = new IntakeSubsystem();
+    shooter = new ShooterCoordinator();
+    intake = new IntakeCoordinator();
     twindexer = new TwindexerSubsystem();
 
     configureSuperStructure();
@@ -53,11 +53,11 @@ public class RobotContainer {
     return operatorController;
   }
 
-  public ShooterSubsystem getShooter(){
+  public ShooterCoordinator getShooter(){
     return shooter;
   }
 
-  public IntakeSubsystem getIntake(){
+  public IntakeCoordinator getIntake(){
     return intake;
   }
 

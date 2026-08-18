@@ -15,10 +15,10 @@ import frc.lib.statemachine.StateMachine.State;
 import frc.robot.subsystems.indexer.TwindexerConstants;
 import frc.robot.subsystems.indexer.TwindexerSubsystem;
 import frc.robot.subsystems.intake.IntakeConstants;
-import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.intake.IntakeCoordinator;
 import frc.robot.subsystems.shooter.ShooterConstants.ShootParams;
 import frc.robot.subsystems.shooter.ShooterConstants;
-import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.shooter.ShooterCoordinator;
 
 public class SuperStructure extends SubsystemBase {
     /** Creates a new SuperStructure. */
@@ -29,8 +29,8 @@ public class SuperStructure extends SubsystemBase {
 
     private final StateMachine statemachine;
 
-    private final ShooterSubsystem shooter;
-    private final IntakeSubsystem intake;
+    private final ShooterCoordinator shooter;
+    private final IntakeCoordinator intake;
     private final TwindexerSubsystem twindexer;
 
     private static SuperStructure superstructure = null;
