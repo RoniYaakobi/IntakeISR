@@ -20,8 +20,8 @@ public class HoodIOSim implements HoodIO {
     private final SingleJointedArmSim hoodSim;
 
     public HoodIOSim(){
-        sparky = new SparkFlex(HoodConstants.CAN_ID, MotorType.kBrushless);
-        sparkySim = new SparkFlexSim(sparky, HoodConstants.MOTOR);
+        sparky = new SparkFlex(HoodConstants.ATTRIBUTES.CAN_ID(), MotorType.kBrushless);
+        sparkySim = new SparkFlexSim(sparky, HoodConstants.ATTRIBUTES.MOTOR());
         sparky.configure(HoodConstants.getHoodConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
         hoodSim = HoodConstants.getHoodSim();
@@ -35,7 +35,7 @@ public class HoodIOSim implements HoodIO {
 
         sparkySim.iterate(
             UnitConversions.radiansPerSecondToRotationsPerMinute(
-                hoodSim.getVelocityRadPerSec()) * HoodConstants.GEAR_RATIO,
+                hoodSim.getVelocityRadPerSec()) * HoodConstants.ATTRIBUTES.GEAR_RATIO(),
             RoboRioSim.getVInVoltage(),
             Constants.LOOP_PERIOD_SECONDS);
 
@@ -44,7 +44,6 @@ public class HoodIOSim implements HoodIO {
 
     @Override
     public void setAngle(Rotation2d rotation) {
-        sparkySim.enable();
         sparky.getClosedLoopController().setSetpoint(rotation.getRotations(), ControlType.kPosition);
     }
 

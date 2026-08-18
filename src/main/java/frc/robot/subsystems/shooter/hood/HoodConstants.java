@@ -11,16 +11,16 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.lib.math.UnitConversions;
+import frc.lib.motor.MotorAttributes;
 import frc.robot.Constants;
 
 
 public class HoodConstants {
-    public static final double GEAR_RATIO = 40;
-    public static final int CAN_ID = 67;
+    public static final MotorAttributes ATTRIBUTES = 
+            new MotorAttributes(19, DCMotor.getNeoVortex(1),
+             40, 1, false);
 
     public static final double MOMENT_OF_INERTIA = 0.015625;
-
-    public static final DCMotor MOTOR = DCMotor.getNeoVortex(1);
 
     public static final Rotation2d TOLERANCE_ROTATIONS = Rotation2d.fromDegrees(0.5);
 
@@ -62,9 +62,9 @@ public class HoodConstants {
 
         var plant = 
                 LinearSystemId.createSingleJointedArmSystem(
-                        MOTOR,
+                        ATTRIBUTES.MOTOR(),
                         MOMENT_OF_INERTIA,
-                        GEAR_RATIO);
+                        ATTRIBUTES.GEAR_RATIO());
 
         return plant;
     }
@@ -72,8 +72,8 @@ public class HoodConstants {
     public static SingleJointedArmSim getHoodSim(){
         return new SingleJointedArmSim(
                 getPlant(), 
-                MOTOR, 
-                GEAR_RATIO, 
+                ATTRIBUTES.MOTOR(), 
+                ATTRIBUTES.GEAR_RATIO(), 
                 ARM_LENGTH_METERS,
                 MIN_ANGLE,
                 MAX_ANGLE,

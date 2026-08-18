@@ -11,11 +11,13 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.shooter.kicker.KickerSubsystem;
 
 public class Robot extends LoggedRobot {
 
     KickerSubsystem s;
+    CommandXboxController x;
   public Robot() {
     
 
@@ -47,11 +49,11 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {    
-    var superstructure = SuperStructure.getInstance().getCommand();
+    // var superstructure = SuperStructure.getInstance().getCommand();
 
-    if (superstructure != null) {
-      CommandScheduler.getInstance().schedule(superstructure);
-    }
+    // if (superstructure != null) {
+    //   CommandScheduler.getInstance().schedule(superstructure);
+    // }
   }
 
   @Override
@@ -61,12 +63,17 @@ public class Robot extends LoggedRobot {
   public void autonomousExit() {}
 
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    x= new CommandXboxController(0);
+    s = new KickerSubsystem();
+
+    x.a().onTrue(s.setDutyCycleCommand(0.2));
+    x.b().onTrue(s.setDutyCycleCommand(0.5));
+    x.y().onTrue(s.stopCommand());
+  }
 
   @Override
-  public void teleopPeriodic() {
-    
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void teleopExit() {}

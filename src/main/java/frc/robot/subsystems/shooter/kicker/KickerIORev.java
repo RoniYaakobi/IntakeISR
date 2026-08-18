@@ -10,7 +10,7 @@ public class KickerIORev implements KickerIO{
     private final SparkFlex sparky;
 
     public KickerIORev(){
-        sparky = new SparkFlex(KickerConstants.CAN_ID, MotorType.kBrushless);
+        sparky = new SparkFlex(KickerConstants.ATTRIBUTES.CAN_ID(), MotorType.kBrushless);
         sparky.configure(KickerConstants.getKickerConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 

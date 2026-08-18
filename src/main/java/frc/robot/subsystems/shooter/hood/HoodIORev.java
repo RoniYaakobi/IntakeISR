@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter.hood;
 
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -11,7 +13,8 @@ public class HoodIORev implements HoodIO {
     private final SparkFlex sparky;
 
     public HoodIORev(){
-        sparky = new SparkFlex(HoodConstants.CAN_ID, MotorType.kBrushless);
+        sparky = new SparkFlex(HoodConstants.ATTRIBUTES.CAN_ID(), MotorType.kBrushless);
+        sparky.configure(HoodConstants.getHoodConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override

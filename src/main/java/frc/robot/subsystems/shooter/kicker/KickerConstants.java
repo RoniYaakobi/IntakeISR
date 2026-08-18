@@ -13,16 +13,15 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import frc.lib.motor.MotorAttributes;
 
 public class KickerConstants {
-    public static final double GEAR_RATIO = 3;
-    public static final double UNIT_CONVERSION = 0.67 * Math.PI;
-    public static final int CAN_ID = 67;
+    public static final MotorAttributes ATTRIBUTES = 
+            new MotorAttributes(30, DCMotor.getNeoVortex(1),
+             3, 0.67 * Math.PI, false);
 
     public static final double kV = 0.31938;
     public static final double kA = 0.023275;
-
-    public static final DCMotor MOTOR = DCMotor.getNeoVortex(1);
 
     public static final double TOLERANCE_METERS = 0.5;
 
@@ -31,19 +30,19 @@ public class KickerConstants {
 
         sparky.smartCurrentLimit(80, 40);
 
-        sparky.encoder.positionConversionFactor(UNIT_CONVERSION);
+        sparky.encoder.positionConversionFactor(ATTRIBUTES.UNIT_CONVERSION());
 
         sparky.closedLoop.pid(0.1, 0.05, 0);
         sparky.closedLoop.iZone(2);
-        sparky.closedLoop.iMaxAccum(3);
+        sparky.closedLoop.iMaxAccum(60);
 
-        sparky.closedLoop.feedForward.kV(0.382 / UNIT_CONVERSION);
+        sparky.closedLoop.feedForward.kV(0.382 / ATTRIBUTES.UNIT_CONVERSION());
 
         return sparky;
     }
 
     private static LinearSystem<N1, N1, N1> getPlant(){
-        double unitConversion = KickerConstants.UNIT_CONVERSION;
+        double unitConversion = KickerConstants.ATTRIBUTES.UNIT_CONVERSION();
 
         Per<VoltageUnit, AngularVelocityUnit> kV = 
             Units.Volts.per(Units.RotationsPerSecond)
@@ -63,6 +62,6 @@ public class KickerConstants {
     }
 
     public static FlywheelSim getKickerSim(){
-        return new FlywheelSim(KickerConstants.getPlant(), KickerConstants.MOTOR);
+        return new FlywheelSim(getPlant(), KickerConstants.ATTRIBUTES.MOTOR());
     }
 }

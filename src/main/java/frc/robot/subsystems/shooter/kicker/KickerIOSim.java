@@ -19,8 +19,8 @@ public class KickerIOSim implements KickerIO{
     private final FlywheelSim kickerSim;
 
     public KickerIOSim(){
-        sparky = new SparkFlex(KickerConstants.CAN_ID, MotorType.kBrushless);
-        sparkySim = new SparkFlexSim(sparky, KickerConstants.MOTOR);
+        sparky = new SparkFlex(KickerConstants.ATTRIBUTES.CAN_ID(), MotorType.kBrushless);
+        sparkySim = new SparkFlexSim(sparky, KickerConstants.ATTRIBUTES.MOTOR());
         sparky.configure(KickerConstants.getKickerConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
         kickerSim = KickerConstants.getKickerSim();
@@ -29,7 +29,6 @@ public class KickerIOSim implements KickerIO{
 
     @Override
     public void setDutyCycle(double dutycycle) {
-        sparkySim.enable(); //TODO check this in more depth
         sparkySim.setAppliedOutput(dutycycle);
     }
 
@@ -45,7 +44,7 @@ public class KickerIOSim implements KickerIO{
         kickerSim.update(Constants.LOOP_PERIOD_SECONDS);
 
         sparkySim.iterate(
-            kickerSim.getAngularVelocityRPM() * KickerConstants.GEAR_RATIO,
+            kickerSim.getAngularVelocityRPM() * KickerConstants.ATTRIBUTES.GEAR_RATIO(),
             RoboRioSim.getVInVoltage(),
             Constants.LOOP_PERIOD_SECONDS);
         
