@@ -55,7 +55,7 @@ public class HoodSubsystem extends SubsystemBase {
 
     var zeroHood = closeHood.addState(setAngleCommand(Rotation2d.kZero), ShooterConstants.ZERO_HOOD);
 
-    var turnOffHood = closeHood.addState(closeHoodCommand(), ShooterConstants.CLOSE_HOOD);
+    var turnOffHood = closeHood.addState(stopCommand(), ShooterConstants.TURN_OFF);
 
     closeHood.setInitialState(zeroHood);
     zeroHood.switchTo(turnOffHood).when(() -> waitUntilClose(Rotation2d.kZero));

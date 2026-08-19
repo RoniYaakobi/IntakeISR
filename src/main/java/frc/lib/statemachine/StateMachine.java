@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -169,6 +171,8 @@ public final class StateMachine extends Command {
 
     @Override
     public boolean isFinished(){
+        Logger.recordOutput(getName(), currentState == null ? "None" : currentState.command.getName());
+
         return currentState == null;
     }
 
@@ -181,11 +185,14 @@ public final class StateMachine extends Command {
 
             currentState.runEnterCallbacks();
             queuedTransition = false;
+            return;
         }
 
-
+        Logger.recordOutput("Bruh", CommandScheduler.getInstance().isScheduled(currentState.command()));
         if (CommandScheduler.getInstance().isScheduled(currentState.command())){
+            Logger.recordOutput("Tung",currentState.transitions().size());
             for (var transition : currentState.transitions()){
+                Logger.recordOutput(transition.nextSupplier.get().command.getName(), transition.condition.getAsBoolean());
                 if (transition.shouldTransition()){
                     // Cancel the current state's command and move to the next state specified by the
                     // transition. Break the state loop early to avoid an unnecessary yield() call and
@@ -197,7 +204,7 @@ public final class StateMachine extends Command {
                     // that the transition is only triggered once per loop iteration.
                     currentState.runExitCallbacks();
                     currentCommand.cancel();
-                    currentState = verifyState(transition.nextState());
+                    setCurrentState(verifyState(transition.nextState()));
                     return;
                 }
             }
@@ -205,7 +212,12 @@ public final class StateMachine extends Command {
         }
 
         currentState.runExitCallbacks();
-        currentState = verifyState(currentState.nextState());
+        setCurrentState(verifyState(currentState.nextState()));
+    }
+
+    @Override
+    public void end(boolean isFinished){
+        Logger.recordOutput(getName(), "None");
     }
 
     private void setCurrentState(State state){
@@ -263,7 +275,7 @@ public final class StateMachine extends Command {
             this.command = command;
         }
 
-        private Command command(){
+        public Command command(){
             return command;
         }
 
@@ -275,7 +287,7 @@ public final class StateMachine extends Command {
             exitCallbacks.forEach(Runnable::run);
         }
 
-        private List<Transition> transitions() {
+        public List<Transition> transitions() {
             return transitions;
         }
 

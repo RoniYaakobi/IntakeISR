@@ -6,9 +6,13 @@ public interface TwindexerIO {
 
     @AutoLog
     public static class TwindexerInputs{
-        double[] speedsRPS;
+        double[] speedsRPS; // The speeds of the spindexers in the twindexer 
     }
 
+    /**
+     * Set the dutyCycle for the Twindexers
+     * @param dutyCycle
+     */
     void setDutyCycle(double dutyCycle);
 
     void stop();

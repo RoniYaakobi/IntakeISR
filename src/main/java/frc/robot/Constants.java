@@ -20,6 +20,8 @@ public class Constants {
     public static final double MOTOR_IDEAL_VOLTAGE = 13;
 
     public static final StateName AUTONOMOUS_STATE_NAME = new StateName("autonomous");
+    public static final StateName IDLE_STATE_NAME = new StateName("idle");
+    public static final StateName TELEOP_STATE_NAME = new StateName("teleop");
 
     public static final Mode simMode = Mode.REAL;
     public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;

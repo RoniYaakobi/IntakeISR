@@ -25,7 +25,7 @@ public class ShooterConstants {
     public static final StateName SHOOT = new StateName("SHOOT");
 
     public static final StateName ZERO_HOOD = new StateName("ZERO_HOOD");
-    public static final StateName CLOSE_HOOD = new StateName("CLOSE_HOOD");
+    public static final StateName TURN_OFF = new StateName("TURN_OFF");
 
     
 }

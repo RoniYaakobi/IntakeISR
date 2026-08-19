@@ -7,6 +7,7 @@ package frc.robot.subsystems.intake.pivot;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,7 +19,7 @@ public class PivotSubsystem extends SubsystemBase {
   private final PivotInputsAutoLogged inputs;
   
   public PivotSubsystem() {
-    io = null;
+    io = RobotBase.isReal() ? new PivotIOCTRE() : new PivotIOSim();
     inputs = new PivotInputsAutoLogged();
   }
 

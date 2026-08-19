@@ -10,10 +10,15 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 
 public class Robot extends LoggedRobot {
+
+  private Command m_autonomousCommand;
+
+  private Command m_teleopSuperStructre;
 
   public Robot() {
     
@@ -27,7 +32,12 @@ public class Robot extends LoggedRobot {
     }
 
     Logger.start();
+    RobotContainer.getInstance();
+    SuperStructure.getInstance();
   }
+
+  @Override
+  public void robotInit(){}
 
   @Override
   public void robotPeriodic() {
@@ -35,8 +45,7 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void disabledInit() {
-  }
+  public void disabledInit() {}
 
   @Override
   public void disabledPeriodic() {}
@@ -45,11 +54,11 @@ public class Robot extends LoggedRobot {
   public void disabledExit() {}
 
   @Override
-  public void autonomousInit() {    
-    var superstructure = SuperStructure.getInstance().getCommand();
+  public void autonomousInit() {
+    m_autonomousCommand = RobotContainer.getInstance().getAutonomousCommand();
 
-    if (superstructure != null) {
-      CommandScheduler.getInstance().schedule(superstructure);
+    if (m_autonomousCommand != null) {
+      CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
   }
 
@@ -60,7 +69,17 @@ public class Robot extends LoggedRobot {
   public void autonomousExit() {}
 
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
+
+    m_teleopSuperStructre = SuperStructure.getInstance().getCommand().repeatedly();
+
+    if (m_teleopSuperStructre != null) {
+      CommandScheduler.getInstance().schedule(m_teleopSuperStructre);
+    }
+  }
 
   @Override
   public void teleopPeriodic() {}

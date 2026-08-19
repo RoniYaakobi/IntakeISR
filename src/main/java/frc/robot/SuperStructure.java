@@ -4,14 +4,17 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.statemachine.StateMachine;
 import frc.lib.statemachine.StateMachine.State;
+import frc.lib.statemachine.StateMachine.StateName;
 import frc.robot.subsystems.indexer.TwindexerConstants;
 import frc.robot.subsystems.indexer.TwindexerSubsystem;
 import frc.robot.subsystems.intake.IntakeConstants;
@@ -22,10 +25,9 @@ import frc.robot.subsystems.shooter.ShooterCoordinator;
 
 public class SuperStructure extends SubsystemBase {
     /** Creates a new SuperStructure. */
-    public static final Trigger IS_TELEOP = new Trigger(RobotState::isTeleop);
-    
     private final CommandXboxController driverController;
-    private final CommandXboxController operatorController;
+    private final List<State> states;
+
 
     private final StateMachine statemachine;
 
@@ -35,9 +37,11 @@ public class SuperStructure extends SubsystemBase {
 
     private static SuperStructure superstructure = null;
 
+
+
     public static SuperStructure getInstance(){
         if (superstructure == null){
-        superstructure = new SuperStructure();
+            superstructure = new SuperStructure();
         }
 
         return superstructure;
@@ -46,60 +50,86 @@ public class SuperStructure extends SubsystemBase {
     private SuperStructure() {
         statemachine = new StateMachine("SuperStructure");
         driverController = RobotContainer.getInstance().getDriverController();
-        operatorController = RobotContainer.getInstance().getOperatorController();
+
+        states = new ArrayList<>();
 
         shooter = RobotContainer.getInstance().getShooter();
         intake = RobotContainer.getInstance().getIntake();
         twindexer = RobotContainer.getInstance().getTwindexer();
 
+        statemachine.setInitialState(
+            registerState(
+                this.idle(), 
+                Constants.IDLE_STATE_NAME
+            )
+        );
+
         configureBindings();
-        configureTransitions();
     }
 
-    private void configureBinding(State state, Trigger binding){
-        statemachine.switchFromAny().to(state).when(binding);
+    private State registerState(Command cmd, StateName stateName){
+        var state = statemachine.addState(cmd, stateName);
+        states.add(state);
+        return state;
+    }
+
+    private void switchFromAnyOtherThanMyself(State to, Trigger trigger){
+        for (State from : states){
+            if (from == to) {
+                continue;
+            }
+
+            from.switchTo(to).when(trigger);
+        }
+    }
+
+    private void configureBinding(State to, Trigger binding){
+        switchFromAnyOtherThanMyself(to, binding);
     }
 
     private void configureBindings(){
-        var activateIntake = statemachine.addState(intake.activateIntake(), IntakeConstants.INTAKE_ACTIVATE_STATE_NAME);
-        configureBinding(activateIntake, driverController.b());
+        var activateIntake = 
+                registerState(
+                    intake.activateIntake().withName("b").repeatedly(), 
+                    IntakeConstants.INTAKE_ACTIVATE_STATE_NAME);
 
-        var closeIntake = statemachine.addState(intake.disableIntake(), IntakeConstants.INTAKE_DISABLE_STATE_NAME);
-        configureBinding(closeIntake, driverController.a());
+        var closeIntake = 
+                registerState(
+                    intake.disableIntake().withName("a").repeatedly(), 
+                    IntakeConstants.INTAKE_DISABLE_STATE_NAME);
+        
+        var spinUpAndShoot = 
+                registerState(
+                    shooter.spinUpAndShootCommand(
+                        new ShootParams(10, 0, Rotation2d.fromRotations(0.04)), 
+                        new ShootParams(15, 0.6, Rotation2d.fromRotations(0.08333))
+                    ).withName("x").repeatedly(),
+                    ShooterConstants.SPIN_UP_AND_SHOOT_STATE_NAME);
+        
+        var stopShooting = 
+                registerState(
+                    shooter.stopCommand().withName("y").repeatedly(), 
+                    ShooterConstants.STOP_SHOOTING_STATE_NAME);
+        
+        var index = 
+                registerState(
+                    twindexer.indexCommand(0).withName("left bumper"), 
+                    TwindexerConstants.INDEX_STATE_NAME);
 
-        var spinUpAndShoot = statemachine.addState(
-            shooter.spinUpAndShootCommand(
-                new ShootParams(0, 0, Rotation2d.kZero), 
-                new ShootParams(0, 0, Rotation2d.kZero)),
-            ShooterConstants.SPIN_UP_AND_SHOOT_STATE_NAME);
-        configureBinding(spinUpAndShoot, driverController.x());
+        var stopIndexing = 
+                registerState(
+                    twindexer.stopCommand().withName("right bumper"), 
+                    TwindexerConstants.STOP_INDEXING_NAME);
 
-        var stopShooting = statemachine.addState(shooter.stopCommand(), ShooterConstants.STOP_SHOOTING_STATE_NAME);
-        configureBinding(stopShooting, driverController.y());
-
-        var index = statemachine.addState(twindexer.indexCommand(0), TwindexerConstants.INDEX_STATE_NAME);
         configureBinding(index, driverController.leftBumper());
-
-        var stopIndexing = statemachine.addState(twindexer.stopCommand(), TwindexerConstants.STOP_INDEXING_NAME);
+        configureBinding(stopShooting, driverController.y());
+        configureBinding(spinUpAndShoot, driverController.x());
         configureBinding(stopIndexing, driverController.rightBumper());
-    }
-
-    private void configureTransitions(){
-        var autonomous = statemachine.addState(
-            RobotContainer.getInstance().getAutonomousCommand(),
-            Constants.AUTONOMOUS_STATE_NAME
-        );
-
-        statemachine.setInitialState(autonomous);
+        configureBinding(activateIntake, driverController.b());
+        configureBinding(closeIntake, driverController.a());
     }
 
     public Command getCommand(){
         return statemachine;
-    }
-
-
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
     }
 }

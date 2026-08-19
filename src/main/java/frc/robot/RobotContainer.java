@@ -39,10 +39,6 @@ public class RobotContainer {
     intake = new IntakeCoordinator();
     twindexer = new TwindexerSubsystem();
 
-    configureSuperStructure();
-  }
-
-  private void configureSuperStructure(){
   }
 
   public CommandXboxController getDriverController(){
