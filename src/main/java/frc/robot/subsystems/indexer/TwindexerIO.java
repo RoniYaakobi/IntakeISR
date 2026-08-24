@@ -10,13 +10,20 @@ public interface TwindexerIO {
     }
 
     /**
-     * Set the dutyCycle for the Twindexers
-     * @param dutyCycle
+     * Set the dutyCycle for the twindexer
+     * @param dutyCycle The dutycycle to apply
      */
     void setDutyCycle(double dutyCycle);
 
+    /**
+     * Stop the indexer
+     */
     void stop();
 
+    /**
+     * Update the indexer inputs object for advantage kit
+     * @param inputs The inputs object
+     */
     void updateInputs(TwindexerInputs inputs);
 
 }

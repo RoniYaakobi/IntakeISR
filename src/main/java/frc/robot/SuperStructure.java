@@ -24,9 +24,9 @@ import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterCoordinator;
 
 public class SuperStructure extends SubsystemBase {
-    /** Creates a new SuperStructure. */
+
     private final CommandXboxController driverController;
-    private final List<State> states;
+    private final List<State> registeredStates;
 
 
     private final StateMachine statemachine;
@@ -51,7 +51,7 @@ public class SuperStructure extends SubsystemBase {
         statemachine = new StateMachine("SuperStructure");
         driverController = RobotContainer.getInstance().getDriverController();
 
-        states = new ArrayList<>();
+        registeredStates = new ArrayList<>();
 
         shooter = RobotContainer.getInstance().getShooter();
         intake = RobotContainer.getInstance().getIntake();
@@ -67,14 +67,25 @@ public class SuperStructure extends SubsystemBase {
         configureBindings();
     }
 
+    /**
+     * Initialize and register a state to the superstructure statemachine.
+     * @param cmd The command of the State.
+     * @param stateName The name of the State which you are registering.
+     * @return The state that has just been initialized and registered.
+     */
     private State registerState(Command cmd, StateName stateName){
         var state = statemachine.addState(cmd, stateName);
-        states.add(state);
+        registeredStates.add(state);
         return state;
     }
 
+    /**
+     * Adds a transition from every state other than the current state to the current state.
+     * @param to The state being switched to.
+     * @param trigger The trigger for the state transition.
+     */
     private void switchFromAnyOtherThanMyself(State to, Trigger trigger){
-        for (State from : states){
+        for (State from : registeredStates){
             if (from == to) {
                 continue;
             }
@@ -83,6 +94,11 @@ public class SuperStructure extends SubsystemBase {
         }
     }
 
+    /**
+     * Add a binding of a state to a trigger.
+     * @param to The state to activate on the trigger activation.
+     * @param binding The trigger which trigger's the state.
+     */
     private void configureBinding(State to, Trigger binding){
         switchFromAnyOtherThanMyself(to, binding);
     }
@@ -129,6 +145,10 @@ public class SuperStructure extends SubsystemBase {
         configureBinding(closeIntake, driverController.a());
     }
 
+    /**
+     * Get the Command to execute the statemachine.
+     * @return The command which holds the statemachine.
+     */
     public Command getCommand(){
         return statemachine;
     }

@@ -12,6 +12,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.lib.math.UnitConversions;
 import frc.lib.motor.MotorAttributes;
+import frc.lib.statemachine.StateMachine.StateName;
 import frc.robot.Constants;
 
 
@@ -31,6 +32,9 @@ public class HoodConstants {
     public static final double ARM_LENGTH_METERS = 0.2;
 
     public static final boolean HOOD_SIMULATE_GRAVITY = false;
+
+    public static final StateName ZERO_HOOD = new StateName("ZERO_HOOD");
+    public static final StateName TURN_OFF = new StateName("TURN_OFF");
 
     public static SparkBaseConfig getHoodConfig(){
         var sparky = new SparkFlexConfig();

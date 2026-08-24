@@ -20,7 +20,7 @@ public class RollerIOSim implements RollerIO {
 
         talon.getSimState().setMotorType(TalonFXSimState.MotorType.KrakenX60);
 
-        flywheelSim = RollerConstants.getFlyWheelSim();
+        flywheelSim = RollerConstants.getRollerSim();
     }
 
     @Override

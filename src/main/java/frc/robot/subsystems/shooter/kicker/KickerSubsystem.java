@@ -22,22 +22,38 @@ public class KickerSubsystem extends SubsystemBase {
     inputs = new KickerInputsAutoLogged();
   }
 
+  /**
+   * Stop the kicker.
+   */
   private void stop(){
     io.stop();
     Logger.recordOutput("KickerSubsystem/DutyCycle", 0);
     Logger.recordOutput("KickerSubsystem/Stopped", true);
   }
 
+  /**
+   * Applies a dutycycle output to the kicker.
+   * @param dutycycle The dutycycle to apply to the kicker.
+   */
   private void setDutyCycle(double dutycycle){
     io.setDutyCycle(dutycycle);
     Logger.recordOutput("KickerSubsystem/DutyCycle", dutycycle);
     Logger.recordOutput("KickerSubsystem/Stopped", false);
   }
 
+  /**
+   * Returns command that when run sets a given duty cycle to the motor. 
+   * @param dutycycle The dutycycle to apply.
+   * @return The command to run to apply the dutycycle.
+   */
   public Command setDutyCycleCommand(double dutycycle){
     return Commands.run(() -> setDutyCycle(dutycycle), this);
   }
 
+  /**
+   * Returns a command that when run stops the kicker.
+   * @return The command to run to stop the kicker.
+   */
   public Command stopCommand(){
     return Commands.run(this::stop, this);
   }
@@ -45,7 +61,6 @@ public class KickerSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    // System.out.println(inputs);
     Logger.processInputs(getName(), inputs);
 
     var cmd = getCurrentCommand();

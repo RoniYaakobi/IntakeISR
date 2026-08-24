@@ -22,30 +22,35 @@ public class IntakeCoordinator {
     roller = new RollerSubsystem();
   }
 
+  /**
+   * Manufacture a command that when run activates the intake
+   * @return A command that activates the intake
+   */
   public Command activateIntake(){
     var activateIntake = new StateMachine("Activate Intake");
 
-    var openIntake = activateIntake.addState(
-      pivot.setAngleCommand(PivotConstants.OPEN_PIVOT_POSITION), 
+    var deployIntake = activateIntake.addState(
+      pivot.setAngleCommand(PivotConstants.PIVOT_DEPLOYED_POSITION), 
       IntakeConstants.OPEN_INTAKE_STATE_NAME);
 
     var closeIntake = activateIntake.addState(
       roller.setDutyCycleCommand(RollerConstants.ACTIVE_DUTYCYCLE), 
       IntakeConstants.CLOSE_INTAKE_STATE_NAME);
 
-    activateIntake.setInitialState(openIntake);
-    openIntake.switchTo(closeIntake).when(pivot::isOpen);
+    activateIntake.setInitialState(deployIntake);
+    deployIntake.switchTo(closeIntake).when(pivot::isDeployed);
 
     return activateIntake;
   }
 
+  /**
+   * Manufacture a command that disables the intake
+   * @return A command that disables the intake.
+   */
   public Command disableIntake(){
     var disableIntake = new StateMachine("DISABLE_INTAKE");
 
-    var closeIntake = disableIntake.addState(Commands.parallel(
-        roller.stopCommand(),
-        pivot.setAngleCommand(PivotConstants.CLOSE_PIVOT_POSITION)
-      ), IntakeConstants.CLOSE_INTAKE_STATE_NAME);
+    var closeIntake = disableIntake.addState(closePivot(), IntakeConstants.CLOSE_INTAKE_STATE_NAME);
 
     var haltPivot = disableIntake.addState(pivot.stopCommand(), IntakeConstants.HALT_INTAKE_STATE_NAME);
 
@@ -53,5 +58,16 @@ public class IntakeCoordinator {
     closeIntake.switchTo(haltPivot).when(pivot::isClosed);
 
     return disableIntake;
+  }
+
+  /**
+   * Manufacture a command to close the pivot
+   * @return A commmand that closes the pivot
+   */
+  public Command closePivot(){
+    return Commands.parallel(
+        roller.stopCommand(),
+        pivot.setAngleCommand(PivotConstants.CLOSE_PIVOT_POSITION)
+      );
   }
 }

@@ -23,30 +23,54 @@ public class PivotSubsystem extends SubsystemBase {
     inputs = new PivotInputsAutoLogged();
   }
 
+  /**
+   * Manufacture a command that sets the pivot to an angle
+   * @param rotation The angle to set the pivot to
+   * @return The command that when run sets the pivot to a given angle
+   */
   public Command setAngleCommand(Rotation2d rotation){
     return Commands.run(() -> setAngle(rotation), this);
   }
 
+  /**
+   * Sets the pivot to an angle
+   * @param rotation The angle to set the pivot to
+   */
   private void setAngle(Rotation2d rotation){
     io.setAngle(rotation);
     Logger.recordOutput("PivotSubsystem/AngleSetpoint", rotation);
     Logger.recordOutput("PivotSubsystem/stopped", false);
   }
 
+  /**
+   * Stops the pivot in place
+   */
   private void stop(){
     io.stop();
     Logger.recordOutput("PivotSubsystem/AngleSetpoint", inputs.position);
     Logger.recordOutput("PivotSubsystem/stopped", true);
   }
 
+  /**
+   * Manufacture a command that stops the intake pivot
+   * @return The command that when run stops the intake pivot.
+   */
   public Command stopCommand(){
     return Commands.run(this::stop, this);
   }
 
-  public boolean isOpen(){
-    return IsNear.isNear(inputs.position, PivotConstants.OPEN_PIVOT_POSITION, PivotConstants.POSITION_TOLERANCE);
+  /**
+   * Check if the intake is deployed
+   * @return Whether or not the intake is deployed
+   */
+  public boolean isDeployed(){
+    return IsNear.isNear(inputs.position, PivotConstants.PIVOT_DEPLOYED_POSITION, PivotConstants.POSITION_TOLERANCE);
   }
 
+  /**
+   * Check if the intake is closed
+   * @return Whether or not the intake is closed
+   */
   public boolean isClosed(){
     return IsNear.isNear(inputs.position, PivotConstants.CLOSE_PIVOT_POSITION, PivotConstants.POSITION_TOLERANCE);
   }

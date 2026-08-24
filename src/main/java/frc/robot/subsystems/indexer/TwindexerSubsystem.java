@@ -22,20 +22,36 @@ public class TwindexerSubsystem extends SubsystemBase {
 
   }
 
+  /**
+   * Manufacture a command that activates the indexer
+   * @param dutyCycle The dutycycle to apply to the indexer
+   * @return A command that when run activates the indexer
+   */
   public Command indexCommand(double dutyCycle){
     return Commands.run(() -> setDutyCycle(dutyCycle), this);
   }
 
+  /**
+   * Manufacture a command that stops the indexer
+   * @return A command that when run stops the indexer
+   */
   public Command stopCommand(){
     return Commands.run(this::stop, this);
   }
 
+  /**
+   * Apply a given dutycycle to the indexer
+   * @param dutyCycle The dutycycle to apply
+   */
   private void setDutyCycle(double dutyCycle){
     io.setDutyCycle(dutyCycle);
     Logger.recordOutput("Twindexer/dutyCycle", dutyCycle);
     Logger.recordOutput("Twindexer/stopped", false);
   }
 
+  /**
+   * Stop the indexer
+   */
   private void stop(){
     io.stop();
     Logger.recordOutput("Twindexer/dutyCycle", 0);

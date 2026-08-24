@@ -14,7 +14,6 @@ import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.lib.motor.MotorAttributes;
-import frc.robot.subsystems.shooter.kicker.KickerConstants;
 
 public class FlyWheelConstants {
     public static final MotorAttributes LEAD_ATTRIBUTES = 
@@ -68,8 +67,12 @@ public class FlyWheelConstants {
         return sparky;
     }
 
+    /**
+     * Get the plant for the kicker simulation
+     * @return The plant for the kicker simulation.
+     */
     private static LinearSystem<N1, N1, N1> getPlant(){
-        double unitConversion = KickerConstants.ATTRIBUTES.UNIT_CONVERSION();
+        double unitConversion = FlyWheelConstants.LEAD_ATTRIBUTES.UNIT_CONVERSION();
 
         Per<VoltageUnit, AngularVelocityUnit> kV = 
             Units.Volts.per(Units.RotationsPerSecond)
@@ -88,6 +91,10 @@ public class FlyWheelConstants {
         return plant;
     }
 
+    /**
+     * Get the flywheel simulation
+     * @return The flywheel simulation object.
+     */
     public static FlywheelSim getFlyWheelSim(){
         return new FlywheelSim(getPlant(), FlyWheelConstants.LEAD_ATTRIBUTES.MOTOR());
     }

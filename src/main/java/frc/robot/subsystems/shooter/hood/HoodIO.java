@@ -12,9 +12,20 @@ public interface HoodIO {
     }
 
 
+    /**
+     * Update the inputs object for advantage kit replay
+     * @param inputs The inputs object to update
+     */
     void updateInputs(HoodInputs inputs);
 
+    /**
+     * Set the hood angle
+     * @param rotation The angle that the hood needs to go to.
+     */
     void setAngle(Rotation2d rotation);
 
+    /**
+     * Stop the hood motor.
+     */
     void stop();
 }

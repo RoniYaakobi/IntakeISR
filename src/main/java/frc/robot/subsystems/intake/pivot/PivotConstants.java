@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.lib.motor.MotorAttributes;
 
 public class PivotConstants {
-    public static final Rotation2d OPEN_PIVOT_POSITION = Rotation2d.kZero;
+    public static final Rotation2d PIVOT_DEPLOYED_POSITION = Rotation2d.kZero;
     public static final Rotation2d CLOSE_PIVOT_POSITION = Rotation2d.fromRotations(150);
     public static final Rotation2d POSITION_TOLERANCE = Rotation2d.fromDegrees(3);
 
@@ -45,6 +45,10 @@ public class PivotConstants {
         return config;
     }
 
+    /**
+     * Get the plant for the pivot simulation
+     * @return The plant for the pivot simulation
+     */
     private static LinearSystem<N2, N1, N2> getPlant(){
 
         var plant = 
@@ -56,6 +60,10 @@ public class PivotConstants {
         return plant;
     }
 
+    /**
+     * Get the pivot simulation
+     * @return The pivot simulation
+     */
     public static SingleJointedArmSim getPivotSim(){
         return new SingleJointedArmSim(
                 getPlant(), 
@@ -63,10 +71,8 @@ public class PivotConstants {
                 ATTRIBUTES.GEAR_RATIO(), 
                 INTAKE_LENGTH_METERS,
                 CLOSE_PIVOT_POSITION.getRadians(),
-                OPEN_PIVOT_POSITION.getRadians(),
+                PIVOT_DEPLOYED_POSITION.getRadians(),
                 SIMULATE_ARM_GRAVITY,
                 CLOSE_PIVOT_POSITION.getRadians());
     }
-
-
 }

@@ -23,10 +23,19 @@ public class RollerSubsystem extends SubsystemBase {
 
   }
 
+  /**
+   * Manufacture a command which applies a dutycycle output 
+   * @param dutyCycle The dutycycle output
+   * @return A command that when run applies a dutycycle
+   */
   public Command setDutyCycleCommand(double dutyCycle){
     return Commands.run(() -> setDutyCycle(dutyCycle), this);
   }
 
+  /**
+   * Sets a dutycycle ouput for the intake roller
+   * @param dutyCycle The dutycycle to apply
+   */
   private void setDutyCycle(double dutyCycle){
     io.setDutyCycle(dutyCycle);
     Logger.recordOutput("RollerSubsystem/dutycycle", dutyCycle);
@@ -34,10 +43,17 @@ public class RollerSubsystem extends SubsystemBase {
 
   }
 
+  /**
+   * Manufacture a command that when run stops the intake roller
+   * @return A command that when run stops the intake roller
+   */
   public Command stopCommand(){
     return Commands.run(this::stop, this);
   }
 
+  /**
+   * Stop the intake roller
+   */
   private void stop(){
     io.stop();
     Logger.recordOutput("RollerSubsystem/dutycycle", 0);

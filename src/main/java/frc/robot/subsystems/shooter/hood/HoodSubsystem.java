@@ -26,39 +26,65 @@ public class HoodSubsystem extends SubsystemBase {
     inputs = new HoodInputsAutoLogged();
   }
 
+  /**
+   * A factory for commands that set the hood angle
+   * @param rotation The angle the hood needs to go to
+   * @return A command that when run gives take the hood to an angle.
+   */
   public Command setAngleCommand(Rotation2d rotation){
     return Commands.run(() -> setAngle(rotation), this);
   }
 
+  /**
+   * Tell the hood to go to a certain angle
+   * @param rotation The rotation the hood needs to go to.
+   */
   private void setAngle(Rotation2d rotation){
     io.setAngle(rotation);
     Logger.recordOutput("HoodSubsystem/angleSetpoint", rotation);
     Logger.recordOutput("HoodSubsystem/stopped", false);
   }
 
+  /**
+   * Stop the hood motor.
+   */
   private void stop(){
     io.stop();
     Logger.recordOutput("HoodSubsystem/angleSetpoint", Rotation2d.kZero);
     Logger.recordOutput("HoodSubsystem/stopped", true);
   }
 
+  /**
+   * Command that stops the hood
+   * @return A command that when run stops the hood.
+   */
   public Command stopCommand(){
     return Commands.run(this::stop, this);
   }
 
-  public boolean waitUntilClose(Rotation2d goal){
+
+  /**
+   * Checks whether the hood is at an angle
+   * @param goal The angle that needs to be reached
+   * @return Whether or not the angle has been reached
+   */
+  public boolean isAtAngle(Rotation2d goal){
     return IsNear.isNear(inputs.angle, goal, ShooterConstants.HOOD_TOLERANCE);
   }
 
+  /**
+   * Factory method that returns a command which closes the hood
+   * @return A command that closes the hood.
+   */
   public Command closeHoodCommand(){
     var closeHood = new StateMachine("close hood");
 
-    var zeroHood = closeHood.addState(setAngleCommand(Rotation2d.kZero), ShooterConstants.ZERO_HOOD);
+    var zeroHood = closeHood.addState(setAngleCommand(Rotation2d.kZero), HoodConstants.ZERO_HOOD);
 
-    var turnOffHood = closeHood.addState(stopCommand(), ShooterConstants.TURN_OFF);
+    var turnOffHood = closeHood.addState(stopCommand(), HoodConstants.TURN_OFF);
 
     closeHood.setInitialState(zeroHood);
-    zeroHood.switchTo(turnOffHood).when(() -> waitUntilClose(Rotation2d.kZero));
+    zeroHood.switchTo(turnOffHood).when(() -> isAtAngle(Rotation2d.kZero));
 
     return closeHood;
 

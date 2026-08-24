@@ -14,7 +14,6 @@ import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.lib.motor.MotorAttributes;
 import frc.lib.statemachine.StateMachine.StateName;
-import frc.robot.subsystems.shooter.kicker.KickerConstants;
 
 public class TwindexerConstants {
     public static final StateName INDEX_STATE_NAME = new StateName("INDEX");
@@ -52,8 +51,12 @@ public class TwindexerConstants {
         return sparky;
     }
 
+    /**
+     * Get the plant for the indexer simulation
+     * @return The plant for the indexer simulation
+     */
     private static LinearSystem<N1, N1, N1> getPlant(){
-        double unitConversion = KickerConstants.ATTRIBUTES.UNIT_CONVERSION();
+        double unitConversion = TwindexerConstants.LEFT_ATTRIBUTES.UNIT_CONVERSION();
 
         Per<VoltageUnit, AngularVelocityUnit> kV = 
             Units.Volts.per(Units.RotationsPerSecond)
@@ -72,6 +75,10 @@ public class TwindexerConstants {
         return plant;
     }
 
+    /**
+     * Get the twindexer simulation
+     * @return The twindexer simulation
+     */
     public static FlywheelSim getSpindexerSim(){
         return new FlywheelSim(getPlant(), TwindexerConstants.LEFT_ATTRIBUTES.MOTOR());
     }

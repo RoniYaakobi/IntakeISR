@@ -16,14 +16,17 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.lib.motor.MotorAttributes;
 
 public class KickerConstants {
+    // Attributes of the motor
     public static final MotorAttributes ATTRIBUTES = 
             new MotorAttributes(30, DCMotor.getNeoVortex(1),
              3, 0.67 * Math.PI, false);
 
+    // Simulation constants
     public static final double kV = 0.31938;
     public static final double kA = 0.023275;
 
-    public static final double TOLERANCE_METERS = 0.5;
+    // Kicker tolerance to setpoint in mps
+    public static final double TOLERANCE_MPS = 0.5;
 
     public static SparkBaseConfig getKickerConfig(){
         var sparky = new SparkFlexConfig();
@@ -41,6 +44,10 @@ public class KickerConstants {
         return sparky;
     }
 
+    /**
+     * Get the plant for the kicker simulation
+     * @return The plant for the kicker simulation.
+     */
     private static LinearSystem<N1, N1, N1> getPlant(){
         double unitConversion = KickerConstants.ATTRIBUTES.UNIT_CONVERSION();
 
@@ -52,6 +59,7 @@ public class KickerConstants {
             Units.Volts.per(Units.RotationsPerSecondPerSecond)
                 .ofNative(KickerConstants.kA * unitConversion);
         
+        // Process in state space notation
         LinearSystem<N1, N1, N1> plant = 
             LinearSystemId.identifyVelocitySystem(
                 kV.in(Units.VoltsPerRadianPerSecond),
@@ -61,6 +69,10 @@ public class KickerConstants {
         return plant;
     }
 
+    /**
+     * Get a flywheel simulation
+     * @return The simulation.
+     */
     public static FlywheelSim getKickerSim(){
         return new FlywheelSim(getPlant(), KickerConstants.ATTRIBUTES.MOTOR());
     }

@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake.pivot;
 
 import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,7 +30,7 @@ public class PivotIOSim implements PivotIO {
 
     @Override
     public void stop() {
-        talon.stopMotor();
+        talon.setControl(new StaticBrake());    
     }
 
     @Override

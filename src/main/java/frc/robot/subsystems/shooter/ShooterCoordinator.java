@@ -24,6 +24,11 @@ public class ShooterCoordinator {
     kicker = new KickerSubsystem();
   }
 
+  /**
+   * A command that makes your robot shoot.
+   * @param params The shooting parameters.
+   * @return A command to shoot that can be executed.
+   */
   public Command shootCommand(ShootParams params){
     return Commands.parallel(
       flywheel.setSpeedMPSCommand(params.flywheelspeedMPS()),
@@ -32,12 +37,23 @@ public class ShooterCoordinator {
     );
   }
 
+  /**
+   * A command that makes your robot spin up the shooter.
+   * @param params The spin up parameters.
+   * @return A command to spin up that can be executed.
+   */
   public Command spinUpCommand(ShootParams params){
     return Commands.parallel(
       flywheel.setSpeedMPSCommand(params.flywheelspeedMPS()),
       hood.setAngleCommand(params.hoodAngle()));
   }
 
+  /**
+   * A command (statemachine) that makes you first spin up and then shoot. 
+   * @param spinUpParams The parameters for spin up.
+   * @param shootParams The parameters for shooting.
+   * @return The command to run spin up and shoot.
+   */
   public Command spinUpAndShootCommand(ShootParams spinUpParams, ShootParams shootParams){
     var spinUpAndShoot = new StateMachine("SpinUpAndShoot");
     
@@ -51,6 +67,10 @@ public class ShooterCoordinator {
     return spinUpAndShoot;
   }
 
+  /**
+   * Stop the shooter subsystems.
+   * @return The command to stop the shooter subsystems.
+   */
   public Command stopCommand(){
     return Commands.parallel(
       flywheel.stopCommand(),

@@ -22,7 +22,7 @@ public class Robot extends LoggedRobot {
 
   public Robot() {
     
-
+    // Initialize logging based on the robot base.
     if (RobotBase.isReal()) {
       Logger.addDataReceiver(new NT4Publisher());
       Logger.addDataReceiver(new WPILOGWriter());
@@ -32,6 +32,8 @@ public class Robot extends LoggedRobot {
     }
 
     Logger.start();
+    
+    // Initialize the robot container and the superstructure
     RobotContainer.getInstance();
     SuperStructure.getInstance();
   }
